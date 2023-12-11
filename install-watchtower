@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [ -f watchtower.config.json ]
+then
+	private_key=`cat watchtower.config.json  | grep private_key | cut -f4 -d'"'`
+
+	if [ "$private_key" = "" ]
+	then
+		echo
+		echo "\x1B[31m===>\x1B[0m Please set the 'private_key' in the 'watchtower.config.json'"
+		echo
+		exit
+	fi
+
+	goerli_websocket_url=`cat watchtower.config.json | grep goerli_websocket_url | cut -f4 -d'"'`
+
+	if [ "$goerli_websocket_url" = "" ]
+	then
+		echo
+		echo "\x1B[31m===>\x1B[0m Please set the 'goerli_websocket_url' in the 'watchtower.config.json'"
+		echo
+		exit
+	fi
+
+	./docker-run.sh
+else
+	curl https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/watchtower.json > watchtower.config.json 2>/dev/null 
+	echo
+	echo "\x1B[32m===>\x1B[0m Downloaded the 'watchtower.config.json'"
+	echo 
+	echo "\x1B[37m===>\x1B[0m Please edit the follwing parameters in it:"
+	echo "\t1. private_key"
+	echo "\t3. goerli_websocket_url"
+	echo "\t4. host_name                    (optional)"
+	echo "\t5. watchtower_failure_alert_url (optional)"
+	echo
+	echo "\x1B[37m===>\x1B[0m And then run './docker-run.sh'"
+	echo
+	echo '#!/bin/sh' > docker-run.sh
+	echo docker run -v watchtower.config.json:/watchtower/config.json --network host --name watchtower witnesschain/watchtower >> docker-run.sh
+
+	chmod +x docker-run.sh
+fi
