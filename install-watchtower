@@ -1,43 +1,203 @@
 #!/bin/sh
 
-if [ -f watchtower.config.json ]
-then
-	private_key=`cat watchtower.config.json  | grep private_key | cut -f4 -d'"'`
+echo
+echo "==================================="
+echo " Witnesschain WatchTower installer"
+echo "==================================="
+echo
 
-	if [ "$private_key" = "" ]
+cf="watchtower.config.json"
+
+docker_name="--name watchtower"
+docker_network="--network host"
+docker_read_only=":ro"
+docker_volume_mounts="-v ./$cf:/watchtower/src/client/config.json$docker_read_only"
+docker_security_options="--security-opt=no-new-privileges --pids-limit=128"
+
+docker_options="$docker_security_options $docker_volume_mounts $docker_network $docker_name"
+
+#---------------- Build the docker-run.sh --------------------------------------
+
+cat <<EOF > docker-run.sh
+#!/bin/sh
+
+echo
+echo "========================="
+echo " Witnesschain WatchTower"
+echo "========================="
+echo
+
+host_name=\`cat $cf | grep host_name | cut -f4 -d'"'\`
+
+if [ "\$host_name" = "" ]
+then
+	docker_user_option="--user 65534:65534" # nobody user = 65534
+else
+	docker_user_option="" # run as root as we need a certificate
+fi
+
+if [ -f $cf ]
+then
+	error="no"
+
+	fields=""
+	fields="\${fields} private_key"
+	fields="\${fields} eth_testnet_websocket_url"
+	fields="\${fields} eth_testnet_chain_id"
+	fields="\${fields} currently_watching_l2"
+	fields="\${fields} chain_id"
+	fields="\${fields} op_geth_rpc_url"
+	fields="\${fields} op_node_rpc_url"
+	fields="\${fields} l2oo_address"
+
+	fields_not_set=""
+
+	for f in \$fields
+	do
+		lines=\`cat $cf | grep \"\$f\" -n | tr -d ' '\`
+
+		for c in \`echo \$lines | cut -f1- -d,\`
+		do
+			line_no=\`echo \$c | cut -f1 -d':'\`
+			value=\`echo \$c | cut -f4 -d'"'\`
+
+			if [ "\$value" = "" ]
+			then
+				fields_not_set="\${fields_not_set} \$f:\$line_no"
+				error="yes"
+			fi
+		done
+	done
+
+	if [ "\$error" = "yes" ]
 	then
+		echo "❌ Please set the following fields in \"$cf\" at:"
+
+		for fl in \$fields_not_set
+		do
+			f=\`echo \$fl | cut -f1 -d':'\`
+			l=\`echo \$fl | cut -f2 -d':'\`
+
+			echo "\tLine no. \$l field \"\$f\""
+		done
+
 		echo
-		echo "\x1B[31m===>\x1B[0m Please set the 'private_key' in the 'watchtower.config.json'"
+		echo "🔵 Rerun the \"./docker-run.sh\""
 		echo
+
 		exit
 	fi
+fi
 
-	goerli_websocket_url=`cat watchtower.config.json | grep goerli_websocket_url | cut -f4 -d'"'`
+docker run \$docker_user_option $docker_options witnesschain/watchtower
+EOF
 
-	if [ "$goerli_websocket_url" = "" ]
+#---------------- End of docker-run.sh -----------------------------------------
+
+chmod +x docker-run.sh
+
+which docker 1>/dev/null 2>/dev/null
+
+if [ "$?" != "0" ]
+then
+	echo
+	echo "🔵 Please install the \"docker\" engine"
+	echo "   Refer : <https://docs.docker.com/engine/install/ubuntu/>"
+	echo
+fi
+
+user_in_docker_group=`groups $USER | grep docker | wc -l`
+
+if [ "$user_in_docker_group" -eq "0" ]
+then
+	echo "🔵 As \"root\" user:"
+	echo "        1. Create and add a \"docker\" group"
+	echo "        2. And add the user \"$USER\" to the group"
+	echo
+	echo "   Refer : <https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user>"
+	echo
+fi
+
+if [ -f $cf ]
+then
+	error="no"
+
+	fields=""
+	fields="\${fields} private_key"
+	fields="\${fields} eth_testnet_websocket_url"
+	fields="\${fields} eth_testnet_chain_id"
+	fields="\${fields} currently_watching_l2"
+	fields="\${fields} chain_id"
+	fields="\${fields} op_geth_rpc_url"
+	fields="\${fields} op_node_rpc_url"
+	fields="\${fields} l2oo_address"
+
+	fields_not_set=""
+
+	for f in $fields
+	do
+		lines=`cat $cf | grep \"$f\" -n | tr -d ' '`
+
+		for c in `echo $lines | cut -f1- -d,`
+		do
+			line_no=`echo $c | cut -f1 -d':'`
+			value=`echo $c | cut -f4 -d'"'`
+
+			if [ "$value" = "" ]
+			then
+				fields_not_set="${fields_not_set} $f:$line_no"
+				error="yes"
+			fi
+		done
+	done
+
+	if [ "$error" = "yes" ]
 	then
+		echo "❌ Please set the following fields in \"$cf\" at:"
+
+		for fl in $fields_not_set
+		do
+			f=`echo $fl | cut -f1 -d':'`
+			l=`echo $fl | cut -f2 -d':'`
+
+			echo "\tLine no. $l field \"$f\""
+		done
+
 		echo
-		echo "\x1B[31m===>\x1B[0m Please set the 'goerli_websocket_url' in the 'watchtower.config.json'"
+		echo "🔵 Finally, run the \"./docker-run.sh\""
 		echo
+
 		exit
 	fi
 
 	./docker-run.sh
 else
-	curl https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/watchtower.json > watchtower.config.json 2>/dev/null 
-	echo
-	echo "\x1B[32m===>\x1B[0m Downloaded the 'watchtower.config.json'"
-	echo 
-	echo "\x1B[37m===>\x1B[0m Please edit the follwing parameters in it:"
-	echo "\t1. private_key"
-	echo "\t3. goerli_websocket_url"
-	echo "\t4. host_name                    (optional)"
-	echo "\t5. watchtower_failure_alert_url (optional)"
-	echo
-	echo "\x1B[37m===>\x1B[0m And then run './docker-run.sh'"
-	echo
-	echo '#!/bin/sh' > docker-run.sh
-	echo docker run -v watchtower.config.json:/watchtower/config.json --network host --name watchtower witnesschain/watchtower >> docker-run.sh
+	curl https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/watchtower.json > $cf 2>/dev/null
 
-	chmod +x docker-run.sh
+	if [ ! -s "$cf" ]
+	then
+		echo
+		echo "❌ The file \"$cf\" could not be downloaded"
+		echo
+		exit
+	fi
+
+	echo "✅ Downloaded the \"$cf\""
+	echo
+	echo "🔵 Edit the following parameters in \"$cf\":"
+	echo "        1. private_key"
+	echo "        2. eth_testnet_websocket_url"
+	echo "        3. currently_watching_l2"
+	echo "        4. host_name                    (optional but recommended for dashboard support)"
+	echo "        5. watchtower_failure_alert_url (optional but recommended for getting error notification)"
+	echo
+
+	echo "🔵 For each of the L2s in \"$cf\" (e.g. base, optimism, etc.), please provide:"
+	echo "        1. chain_id           (L2 chain id)"
+	echo "        2. op_geth_rpc_url    (op-geth's RPC URL)"
+	echo "        3. op_node_rpc_url    (op-node's RPC URL)"
+	echo
+
+	echo "🔵 Finally, run the \"./docker-run.sh\""
+	echo
 fi
