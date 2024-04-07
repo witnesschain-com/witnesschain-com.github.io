@@ -44,7 +44,6 @@ then
 	fields="\${fields} private_key"
 	fields="\${fields} eth_testnet_websocket_url"
 	fields="\${fields} currently_watching_l2"
-	fields="\${fields} op_geth_websocket_url"
 	fields="\${fields} op_geth_rpc_url"
 	fields="\${fields} op_node_rpc_url"
 	fields="\${fields} l2oo_address"
@@ -125,7 +124,6 @@ then
 	fields="\${fields} private_key"
 	fields="\${fields} eth_testnet_websocket_url"
 	fields="\${fields} currently_watching_l2"
-	fields="\${fields} op_geth_websocket_url"
 	fields="\${fields} op_geth_rpc_url"
 	fields="\${fields} op_node_rpc_url"
 	fields="\${fields} l2oo_address"
@@ -191,9 +189,9 @@ else
 	echo
 
 	echo "🔵 For each of the L2s in \"$cf\" (e.g. base, optimism, etc.), please provide:"
-	echo "        1. op_geth_websocket_url  (op-geth's websocket URL)"
-	echo "        2. op_geth_rpc_url    	(op-geth's RPC URL)"
-	echo "        3. op_node_rpc_url   		(op-node's RPC URL)"
+	echo "        1. chain_id           (L2 chain id)"
+	echo "        2. op_geth_rpc_url    (op-geth's RPC URL)"
+	echo "        3. op_node_rpc_url    (op-node's RPC URL)"
 	echo
 
 	echo "🔵 Finally, run the \"./docker-run.sh\""
