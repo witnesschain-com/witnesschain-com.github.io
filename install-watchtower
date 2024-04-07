@@ -87,7 +87,7 @@ then
 	fi
 fi
 
-docker run \$docker_user_option $docker_options witnesschain/watchtower
+docker run -d \$docker_user_option $docker_options witnesschain/watchtower
 EOF
 
 #---------------- End of docker-run.sh -----------------------------------------
