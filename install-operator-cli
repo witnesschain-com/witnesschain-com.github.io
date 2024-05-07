@@ -3,8 +3,8 @@
 RELEASE_URL="https://github.com/kaleidoscope-blockchain/watchtower-operator-cli/releases/download/1.0.0"
 APP_NAME="watchtower-operator"
 
-L1_CONFIG_URL="https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/l1-operator-config.json"
-L2_CONFIG_URL="https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/l2-operator-config.json"
+L1_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/config/main/operator-cli/l1-operator-config.json"
+L2_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/config/main/operator-cli/l2-operator-config.json"
 
 print_hr() {
     local length=${1:-30}  # Default length of the horizontal line
