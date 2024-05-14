@@ -2,8 +2,8 @@
 RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/0.2.0"
 APP_NAME="watchtower-operator"
 
-L1_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/config/main/operator-cli/l1-operator-config.json"
-L2_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/config/main/operator-cli/l2-operator-config.json"
+L1_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/main/watchtower-operator/config/l1-operator-config.json.template"
+L2_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/main/watchtower-operator/config/l2-operator-config.json.template"
 
 print_hr() {
     local length=${1:-30}  # Default length of the horizontal line
