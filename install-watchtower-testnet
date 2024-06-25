@@ -42,7 +42,7 @@ then
 
 	fields=""
 	fields="\${fields} private_key"
-	fields="\${fields} eth_websocket_url"
+	fields="\${fields} eth_testnet_websocket_url"
 	fields="\${fields} currently_watching_l2"
 	fields="\${fields} op_geth_rpc_url"
 	fields="\${fields} op_node_rpc_url"
@@ -69,7 +69,7 @@ then
 
 	if [ "\$error" = "yes" ]
 	then
-		echo "Please set the following fields in \"$cf\" at:"
+		echo "❌ Please set the following fields in \"$cf\" at:"
 
 		for fl in \$fields_not_set
 		do
@@ -80,14 +80,14 @@ then
 		done
 
 		echo
-		echo "Rerun the \"./docker-run.sh\""
+		echo "🔵 Rerun the \"./docker-run.sh\""
 		echo
 
 		exit
 	fi
 fi
 
-docker run \$docker_user_option $docker_options witnesschain/watchtower:1.0.0
+docker run -d \$docker_user_option $docker_options witnesschain/watchtower
 EOF
 
 #---------------- End of docker-run.sh -----------------------------------------
@@ -99,7 +99,7 @@ which docker 1>/dev/null 2>/dev/null
 if [ "$?" != "0" ]
 then
 	echo
-	echo "Please install the \"docker\" engine"
+	echo "🔵 Please install the \"docker\" engine"
 	echo "   Refer : <https://docs.docker.com/engine/install/ubuntu/>"
 	echo
 fi
@@ -108,7 +108,7 @@ user_in_docker_group=`groups $USER | grep docker | wc -l`
 
 if [ "$user_in_docker_group" -eq "0" ]
 then
-	echo "As \"root\" user:"
+	echo "🔵 As \"root\" user:"
 	echo "        1. Create and add a \"docker\" group"
 	echo "        2. And add the user \"$USER\" to the group"
 	echo
@@ -122,7 +122,7 @@ then
 
 	fields=""
 	fields="\${fields} private_key"
-	fields="\${fields} eth_websocket_url"
+	fields="\${fields} eth_testnet_websocket_url"
 	fields="\${fields} currently_watching_l2"
 	fields="\${fields} op_geth_rpc_url"
 	fields="\${fields} op_node_rpc_url"
@@ -149,7 +149,7 @@ then
 
 	if [ "$error" = "yes" ]
 	then
-		echo "Please set the following fields in \"$cf\" at:"
+		echo "❌ Please set the following fields in \"$cf\" at:"
 
 		for fl in $fields_not_set
 		do
@@ -160,7 +160,7 @@ then
 		done
 
 		echo
-		echo "Finally, run the \"./docker-run.sh\""
+		echo "🔵 Finally, run the \"./docker-run.sh\""
 		echo
 
 		exit
@@ -168,32 +168,32 @@ then
 
 	./docker-run.sh
 else
-	curl https://raw.githubusercontent.com/witnesschain-com/diligencewatchtower-client/m1-mainnet/src/client/config.json > $cf 2>/dev/null
+	curl https://raw.githubusercontent.com/witnesschain-com/config/main/watchtower/watchtower.config.json > $cf 2>/dev/null
 
 	if [ ! -s "$cf" ]
 	then
 		echo
-		echo "The file \"$cf\" could not be downloaded"
+		echo "❌ The file \"$cf\" could not be downloaded"
 		echo
 		exit
 	fi
 
-	echo "Downloaded the \"$cf\""
+	echo "✅ Downloaded the \"$cf\""
 	echo
-	echo "Edit the following parameters in \"$cf\":"
+	echo "🔵 Edit the following parameters in \"$cf\":"
 	echo "        1. private_key"
-	echo "        2. eth_websocket_url"
+	echo "        2. eth_testnet_websocket_url"
 	echo "        3. currently_watching_l2"
 	echo "        4. host_name                    (optional but recommended for dashboard support)"
 	echo "        5. watchtower_failure_alert_url (optional but recommended for getting error notification)"
 	echo
 
-	echo "For each of the L2s in \"$cf\" (e.g. base, optimism, etc.), please provide:"
-	echo "        1. op_geth_websocket_url   (op-geth's websocket URL)"
-	echo "        2. op_geth_rpc_url         (op-geth's RPC URL)"
-	echo "        3. op_node_rpc_url         (op-node's RPC URL)"
+	echo "🔵 For each of the L2s in \"$cf\" (e.g. base, optimism, etc.), please provide:"
+	echo "        1. chain_id           (L2 chain id)"
+	echo "        2. op_geth_rpc_url    (op-geth's RPC URL)"
+	echo "        3. op_node_rpc_url    (op-node's RPC URL)"
 	echo
 
-	echo "Finally, run the \"./docker-run.sh\""
+	echo "🔵 Finally, run the \"./docker-run.sh\""
 	echo
 fi
