@@ -9,12 +9,12 @@ echo
 cf="watchtower.config.json"
 
 docker_name="--name watchtower"
-docker_network="--network host"
+
 docker_read_only=":ro"
 docker_volume_mounts="-v /$(pwd)/$cf:/watchtower/src/client/config.json$docker_read_only"
 docker_security_options="--security-opt=no-new-privileges --pids-limit=128"
 
-docker_options="$docker_security_options $docker_volume_mounts $docker_network $docker_name"
+docker_options="$docker_security_options $docker_volume_mounts $docker_name"
 
 #---------------- Build the docker-run.sh --------------------------------------
 
