@@ -168,7 +168,7 @@ then
 
 	./docker-run.sh
 else
-	curl https://raw.githubusercontent.com/witnesschain-com/config/main/watchtower/watchtower.config.json > $cf 2>/dev/null
+	curl https://raw.githubusercontent.com/kaleidoscope-blockchain/config/main/watchtower.json > $cf 2>/dev/null
 
 	if [ ! -s "$cf" ]
 	then
