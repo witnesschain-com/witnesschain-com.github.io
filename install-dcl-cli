@@ -1,6 +1,6 @@
 #!/bin/bash
 RELEASE_URL="https://github.com/witnesschain-com/dcl-operator-cli/releases/download/v0.0.1"
-APP_NAME="dcl-cli"
+APP_NAME="dcl-operator-cli"
 
 CHALLENGER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-challenger-config.json.template"
 PROVER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-prover-config.json.template"
