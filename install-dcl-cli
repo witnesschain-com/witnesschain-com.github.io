@@ -1,0 +1,142 @@
+#!/bin/bash
+RELEASE_URL="https://github.com/witnesschain-com/dcl-operator-cli/releases/download/v0.0.1"
+APP_NAME="dcl-cli"
+
+CHALLENGER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-challenger-config.json.template"
+PROVER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-prover-config.json.template"
+
+print_hr() {
+    local length=${1:-30}  # Default length of the horizontal line
+    local char=${2:-"-"}   # Default character for the line
+    
+    for ((i=1; i<=$length; i++)); do
+        printf "%s" "$char"
+    done
+    printf "\n"
+}
+
+print_title() {
+    local title="$1"
+    local length=${#title}
+    print_hr $length "="
+    echo "$title"
+    print_hr $length "="
+}
+
+print_error() {
+    local message="$@"
+    printf "%s" "$(tput setaf 1)$message$(tput sgr0)" >&2
+}
+
+print_info() {
+    local message="$@"
+    printf "%s" "$(tput setaf 3)$message$(tput sgr0)"
+}
+
+print_success() {
+    local message="$@"
+    printf "%s" "$(tput setaf 2)$message$(tput sgr0)"
+}
+
+print_hr 40
+printf "\n"
+print_title "Setting up WitnessChain CLI"
+
+printf "\n- 🔍 Detecting platform...\n"
+PLATFORM=$(uname)
+ARCH=$(uname -m)
+
+if [ "$PLATFORM" = "Linux" ] && [ "$ARCH" = "x86_64" ]; then
+    print_success "  🐧 Detected linux x86_64"
+    BINARY_NAME="dcl-operator_linux_x86_64"
+elif [ "$PLATFORM" = "Darwin" ] && [ "$ARCH" = "arm64" ]; then
+    print_success " 🍎 Detected apple silicon"
+    BINARY_NAME="dcl-operator_apple_silicon"
+else
+    print_error " 🕵️ Unable to identify platform for the binaries, please setup manually"
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+printf "\n- 🛠️  Setting up workspace..\n"
+mkdir -p ~/.witnesschain/cli
+
+if [ $? = 0 ]; then
+    PATH_TO_CLI="$HOME/.witnesschain/cli"
+    print_success "  🏡 Setup completed - CLI will reside in "
+    printf "%s\n\n" "$PATH_TO_CLI"
+else
+    print_info " 🟡 Unable to create .witnesschain directory at home, going forward with current directory\n\n"
+    PATH_TO_CLI="."
+fi
+cd "$PATH_TO_CLI" || exit
+
+printf "\n- 📜  Getting configuration templates..\n"
+mkdir -p config
+print_info " 🚄 Getting Challenger template"
+printf "\n"
+curl -# -fSL -o "config/operator-challenger-config.json.template" "$CHALLENGER_CONFIG_URL"
+
+if [ $? = 0 ]; then
+    print_success "  ✅ Downloaded Challenger template "
+    
+else
+    print_error "  ❌ Error downloading Challenger template. please refer docs.."
+fi
+
+printf "\n"
+print_info " 🚅 Getting Prover template"
+printf "\n"
+curl -# -fSL -o "config/operator-prover-config.json.template" "$PROVER_CONFIG_URL"
+
+if [ $? = 0 ]; then
+    print_success "  ✅ Downloaded Prover template "
+    
+else
+    print_error "  ❌ Error downloading Prover template. please refer docs.."
+    printf "\n"
+fi
+
+
+printf "\n\n- 🏃 Getting the binaries...\n"
+curl -# -fSL  -o "$APP_NAME" "$RELEASE_URL/$BINARY_NAME"
+if [ $? = 0 ]; then
+    print_success "  ✅ CLI downloaded "
+    
+else
+    print_error "  ❌ Error downloading the binaries. exiting.."
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+printf "\n\n- 👮  Setting executable permissions for dcl-cli..\n"
+sudo chmod -R +x "."
+if [ $? = 0 ]; then
+    print_success "  ✅ Permissions set successfully "
+    
+else
+    print_error "  ❌ Error setting permissions "
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+
+printf "\n\n\n"
+
+print_title "NOTE"
+printf "\n"
+printf "you can refer to the prover/challenger configuration templates located at: \n"
+print_info " Prover : $PATH_TO_CLI/config/operator-prover-config.json.template"
+printf "\n"
+print_info " Challenger : $PATH_TO_CLI/config/operator-challenger-config.json.template"
+
+printf "\n\n\n"
+echo "you can add the following in your shell profile (.zprofile, .bashrc, etc..) to be able to use witnesschain CLI(s) from anywhere!"
+
+printf "\n\n"
+print_info "export PATH=\$PATH:$PATH_TO_CLI"
+printf "\n\n"
+print_hr 40
