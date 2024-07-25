@@ -113,7 +113,7 @@ else
 fi
 
 printf "\n\n- 👮  Setting executable permissions for operator-cli..\n"
-sudo chmod -R +x "."
+chmod -R +x "."
 if [ $? = 0 ]; then
     print_success "  ✅ Permissions set successfully "
     
