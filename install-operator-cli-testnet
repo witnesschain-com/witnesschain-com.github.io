@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/v0.3.0"
+RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/v0.3.1"
 APP_NAME="watchtower-operator"
 
 CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/development/watchtower-operator/config/operator-config.template.json"
