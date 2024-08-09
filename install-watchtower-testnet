@@ -194,6 +194,7 @@ else
 	echo "        3. op_node_rpc_url    (op-node's RPC URL)"
 	echo
 
+	echo "Set your W3 Passphrase: export W3SECRETPASSPHRASE=your_w3_secret_passphrase"
 	echo "🔵 Finally, run the \"./docker-run.sh\""
 	echo
 fi
