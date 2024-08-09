@@ -15,7 +15,7 @@ docker_volume_mounts="-v /$(pwd)/$cf:/watchtower/src/client/config.json$docker_r
 docker_security_options="--security-opt=no-new-privileges --pids-limit=128"
 docker_w3c_env="-e W3SECRETPASSPHRASE=${W3SECRETPASSPHRASE}"
 if [ "${KEYSTORE_PATH}" = "" ]; then
-	docker_w3_keystore_path="-v ${KEYSTORE_PATH}:/watchtower/w3encrypted.key"
+	docker_w3_keystore_path="-v ${KEYSTORE_PATH}:/watchtower.ecdsa.key.json"
 else
 	docker_w3_keystore_path=""
 fi
