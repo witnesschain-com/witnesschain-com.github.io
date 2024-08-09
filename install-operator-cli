@@ -2,7 +2,6 @@
 RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/v0.3.1"
 APP_NAME="watchtower-operator"
 
-CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/m2-mainnet/watchtower-operator/config/operator-config.template.json"
 
 
 print_hr() {
@@ -72,18 +71,6 @@ else
 fi
 cd "$PATH_TO_CLI" || exit
 
-printf "\n- 📜  Getting configuration templates..\n"
-mkdir -p config
-
-curl -# -fSL -o "config/operator-config.template.json" "$CONFIG_URL"
-
-if [ $? = 0 ]; then
-    print_success "  ✅ Downloaded template "
-    
-else
-    print_error "  ❌ Error downloading template. please refer docs.."
-fi
-
 printf "\n"
 
 
@@ -115,13 +102,7 @@ fi
 
 printf "\n\n\n"
 
-print_title "NOTE"
-printf "\n"
-printf "you can refer to the configuration template located at: \n"
-print_info " config : $PATH_TO_CLI/config/operator-config.template.json"
 
-
-printf "\n\n\n"
 echo "you can add the following in your shell profile (.zprofile, .bashrc, etc..) to be able to use witnesschain CLI(s) from anywhere!"
 
 printf "\n\n"
