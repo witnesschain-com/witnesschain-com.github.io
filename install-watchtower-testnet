@@ -14,6 +14,11 @@ docker_read_only=":ro"
 docker_volume_mounts="-v /$(pwd)/$cf:/watchtower/src/client/config.json$docker_read_only"
 docker_security_options="--security-opt=no-new-privileges --pids-limit=128"
 docker_w3c_env="-e W3SECRETPASSPHRASE=${W3SECRETPASSPHRASE}"
+if [ "${KEYSTORE_PATH}" = "" ]; then
+	docker_w3_keystore_path="-v ${KEYSTORE_PATH}:/watchtower/w3encrypted.key"
+else
+	docker_w3_keystore_path=""
+fi
 docker_options="$docker_security_options $docker_volume_mounts $docker_name"
 
 #---------------- Build the docker-run.sh --------------------------------------
@@ -87,7 +92,7 @@ then
 	fi
 fi
 
-docker run -d \$docker_user_option $docker_options $docker_w3c_env  witnesschain/watchtower:1.1.1
+docker run -d \$docker_user_option $docker_options $docker_w3c_env $docker_w3_keystore_path witnesschain/watchtower:1.1.1
 EOF
 
 #---------------- End of docker-run.sh -----------------------------------------
@@ -195,6 +200,10 @@ else
 	echo
 
 	echo "Set your W3 Passphrase: export W3SECRETPASSPHRASE=your_w3_secret_passphrase"
+	echo "Set your encrypted key file path (full path): export KEYSTORE_PATH=/path/to/your/encrypted_key
+	echo
+	echo "Note, in case if you aren't using the encrypted keys, you can ignore the above two exports
+	echo
 	echo "🔵 Finally, run the \"./docker-run.sh\""
 	echo
 fi
