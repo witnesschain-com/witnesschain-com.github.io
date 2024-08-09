@@ -1,9 +1,9 @@
 #!/bin/bash
-RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/0.2.0"
+RELEASE_URL="https://github.com/witnesschain-com/operator-cli/releases/download/v0.3.1"
 APP_NAME="watchtower-operator"
 
-L1_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/main/watchtower-operator/config/l1-operator-config.json.template"
-L2_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/main/watchtower-operator/config/l2-operator-config.json.template"
+CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/operator-cli/m2-mainnet/watchtower-operator/config/operator-config.template.json"
+
 
 print_hr() {
     local length=${1:-30}  # Default length of the horizontal line
@@ -40,7 +40,7 @@ print_success() {
 
 print_hr 40
 printf "\n"
-print_title "Setting up WitnessChain CLI"
+print_title "Setting up WitnessChain Operator CLI | Mainnet (m2 release)"
 
 printf "\n- 🔍 Detecting platform...\n"
 PLATFORM=$(uname)
@@ -74,29 +74,17 @@ cd "$PATH_TO_CLI" || exit
 
 printf "\n- 📜  Getting configuration templates..\n"
 mkdir -p config
-print_info " 🚄 Getting L1 template"
-printf "\n"
-curl -# -fSL -o "config/l1-operator-config.json.template" "$L1_CONFIG_URL"
+
+curl -# -fSL -o "config/operator-config.template.json" "$CONFIG_URL"
 
 if [ $? = 0 ]; then
-    print_success "  ✅ Downloaded L1 template "
+    print_success "  ✅ Downloaded template "
     
 else
-    print_error "  ❌ Error downloading L1 template. please refer docs.."
+    print_error "  ❌ Error downloading template. please refer docs.."
 fi
 
 printf "\n"
-print_info " 🚅 Getting L2 template"
-printf "\n"
-curl -# -fSL -o "config/l2-operator-config.json.template" "$L2_CONFIG_URL"
-
-if [ $? = 0 ]; then
-    print_success "  ✅ Downloaded L2 template "
-    
-else
-    print_error "  ❌ Error downloading L2 template. please refer docs.."
-    printf "\n"
-fi
 
 
 
@@ -129,10 +117,9 @@ printf "\n\n\n"
 
 print_title "NOTE"
 printf "\n"
-printf "you can refer to the l1/l2 configuration templates located at: \n"
-print_info " L1 : $PATH_TO_CLI/config/l1-operator-config.json.template"
-printf "\n"
-print_info " L2 : $PATH_TO_CLI/config/l2-operator-config.json.template"
+printf "you can refer to the configuration template located at: \n"
+print_info " config : $PATH_TO_CLI/config/operator-config.template.json"
+
 
 printf "\n\n\n"
 echo "you can add the following in your shell profile (.zprofile, .bashrc, etc..) to be able to use witnesschain CLI(s) from anywhere!"
