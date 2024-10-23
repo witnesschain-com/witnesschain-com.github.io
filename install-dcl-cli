@@ -1,6 +1,6 @@
 #!/bin/bash
 RELEASE_URL="https://github.com/witnesschain-com/dcl-operator-cli/releases/download/v0.0.8"
-APP_NAME="dcl-operator-cli"
+APP_NAME="witness-cli"
 
 CHALLENGER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-challenger-config.json.template"
 PROVER_CONFIG_URL="https://raw.githubusercontent.com/witnesschain-com/dcl-operator-cli/main/dcl-operator/operator-prover-config.json.template"
@@ -42,29 +42,34 @@ print_hr 40
 printf "\n"
 print_title "Setting up WitnessChain CLI"
 
-printf "\n- 🔍 Detecting platform...\n"
+printf "\n- Platform Details:\n"
 PLATFORM=$(uname)
 ARCH=$(uname -m)
 
 if [ "$PLATFORM" = "Linux" ] && [ "$ARCH" = "x86_64" ]; then
-    print_success "  🐧 Detected linux x86_64"
+    print_success "    Operating System: Linux"
+    printf "\n"
+    print_success "    Architecture: x86_64"
+    printf "\n"
     BINARY_NAME="dcl-operator_linux_x86_64"
 elif [ "$PLATFORM" = "Darwin" ] && [ "$ARCH" = "arm64" ]; then
-    print_success " 🍎 Detected apple silicon"
+    print_success "    Operating Systems: macOS\n"
+    printf "\n"
+    print_success "    Architecture: arm64\n"
+    printf "\n"
     BINARY_NAME="dcl-operator_apple_silicon"
 else
-    print_error " 🕵️ Unable to identify platform for the binaries, please setup manually"
+    print_error " Unable to identify platform for the binaries, please setup manually"
     printf "\n"
     print_hr 40
     exit 1
 fi
 
-printf "\n- 🛠️  Setting up workspace..\n"
-mkdir -p ~/.witnesschain/cli
+mkdir -p ~/.witnesschain
 
 if [ $? = 0 ]; then
-    PATH_TO_CLI="$HOME/.witnesschain/cli"
-    print_success "  🏡 Setup completed - CLI will reside in "
+    PATH_TO_CLI="$HOME/.witnesschain"
+    print_success "Configurations templates: "
     printf "%s\n\n" "$PATH_TO_CLI"
 else
     print_info " 🟡 Unable to create .witnesschain directory at home, going forward with current directory\n\n"
@@ -72,37 +77,31 @@ else
 fi
 cd "$PATH_TO_CLI" || exit
 
-printf "\n- 📜  Getting configuration templates..\n"
 mkdir -p config
-print_info " 🚄 Getting Challenger template"
-printf "\n"
-curl -# -fSL -o "config/operator-challenger-config.json.template" "$CHALLENGER_CONFIG_URL"
 
-if [ $? = 0 ]; then
-    print_success "  ✅ Downloaded Challenger template "
-    
-else
+printf "\n"
+curl -s -fSL -o "config/operator-challenger-config.json.template" "$CHALLENGER_CONFIG_URL"
+
+if [ $? != 0 ]; then
     print_error "  ❌ Error downloading Challenger template. please refer docs.."
 fi
+print_info "challenger config template: $PWD/config/operator-challenger-config.json.template"
 
 printf "\n"
-print_info " 🚅 Getting Prover template"
-printf "\n"
-curl -# -fSL -o "config/operator-prover-config.json.template" "$PROVER_CONFIG_URL"
+curl -s -fSL -o "config/operator-prover-config.json.template" "$PROVER_CONFIG_URL"
 
-if [ $? = 0 ]; then
-    print_success "  ✅ Downloaded Prover template "
-    
-else
-    print_error "  ❌ Error downloading Prover template. please refer docs.."
+if [ $? != 0 ]; then
+    print_error "  ❌ Unable to download prover configuration file."
     printf "\n"
 fi
 
+print_info "Prover config template: $PWD/config/operator-prover-config.json.template"
+printf "\n"
 
-printf "\n\n- 🏃 Getting the binaries...\n"
+printf "\n\n- 🏃 Downloading $APP_NAME...\n"
 curl -# -fSL  -o "$APP_NAME" "$RELEASE_URL/$BINARY_NAME"
 if [ $? = 0 ]; then
-    print_success "  ✅ CLI downloaded "
+    print_success "  ✅ Download completed. "
     
 else
     print_error "  ❌ Error downloading the binaries. exiting.."
@@ -111,32 +110,25 @@ else
     exit 1
 fi
 
-printf "\n\n- 👮  Setting executable permissions for dcl-cli..\n"
 chmod -R +x "."
-if [ $? = 0 ]; then
-    print_success "  ✅ Permissions set successfully "
-    
-else
+if [ $? != 0 ]; then
     print_error "  ❌ Error setting permissions "
     printf "\n"
     print_hr 40
     exit 1
 fi
 
-
-printf "\n\n\n"
-
-print_title "NOTE"
+mv "$APP_NAME" ~/.local/bin/
+if [ $? = 0 ]; then
+    print_success "Installation successful."
+    printf "\n\n\n"
+else
+    print_error "Unable to move $APP_NAME to ~/.local/bin "
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+print_info "Run $APP_NAME --version"
 printf "\n"
-printf "you can refer to the prover/challenger configuration templates located at: \n"
-print_info " Prover : $PATH_TO_CLI/config/operator-prover-config.json.template"
 printf "\n"
-print_info " Challenger : $PATH_TO_CLI/config/operator-challenger-config.json.template"
-
-printf "\n\n\n"
-echo "you can add the following in your shell profile (.zprofile, .bashrc, etc..) to be able to use witnesschain CLI(s) from anywhere!"
-
-printf "\n\n"
-print_info "export PATH=\$PATH:$PATH_TO_CLI"
-printf "\n\n"
-print_hr 40
+printf "\n"
