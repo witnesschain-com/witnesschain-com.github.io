@@ -126,7 +126,7 @@ fi
 
 mv "$APP_NAME" ~/.local/bin/
 if [ $? = 0 ]; then
-    print_success "Installation successful."
+    print_success "Installation successful. $APP_NAME installed in $PWD/$APP_NAME"
     printf "\n\n\n"
 else
     print_error "Unable to move $APP_NAME to ~/.local/bin "
@@ -134,6 +134,7 @@ else
     print_hr 40
     exit 1
 fi
+print_info "Please start a new terminal session if following commands does not work.\n\n"
 print_info "Run $APP_NAME --version"
 printf "\n"
 printf "\n"
