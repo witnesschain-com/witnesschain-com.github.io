@@ -136,7 +136,8 @@ else
 fi
 print_info "Please start a new terminal session if following commands does not work."
 printf "\n\n"
-print_info "Run $APP_NAME --version"
-printf "\n"
-printf "\n"
-printf "\n"
+print_info "Run the following command to test your installation:"
+
+printf "\n\n"
+print_info "$APP_NAME --version"
+printf "\n\n\n"
