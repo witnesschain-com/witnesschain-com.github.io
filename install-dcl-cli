@@ -115,6 +115,15 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
+mkdir -p ~/.local/bin
+if [ $? != 0 ]; then
+    print_error "  Unable to create ~/.local/bin"
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+
 mv "$APP_NAME" ~/.local/bin/
 if [ $? = 0 ]; then
     print_success "Installation successful."
