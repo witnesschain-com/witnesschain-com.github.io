@@ -67,14 +67,11 @@ fi
 
 mkdir -p ~/.witnesschain
 
-if [ $? = 0 ]; then
-    PATH_TO_CLI="$HOME/.witnesschain"
-    print_success "Configurations templates: "
-    printf "%s\n\n" "$PATH_TO_CLI"
-else
+if [ $? != 0 ]; then
     print_info " 🟡 Unable to create .witnesschain directory at home, going forward with current directory\n\n"
     PATH_TO_CLI="."
 fi
+
 cd "$PATH_TO_CLI" || exit
 
 mkdir -p config
