@@ -107,9 +107,9 @@ else
     exit 1
 fi
 
-chmod -R +x "."
+chmod +x "$APP_NAME"
 if [ $? != 0 ]; then
-    print_error "  ❌ Error setting permissions "
+    print_error "  Unable to set executable permission for $PWD/$APP_NAME"
     printf "\n"
     print_hr 40
     exit 1
