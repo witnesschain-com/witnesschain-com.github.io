@@ -66,6 +66,7 @@ else
 fi
 
 mkdir -p ~/.witnesschain
+PATH_TO_CLI="$HOME/.witnesschain"
 
 if [ $? != 0 ]; then
     print_info " 🟡 Unable to create .witnesschain directory at home, going forward with current directory\n\n"
@@ -115,29 +116,36 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-mkdir -p ~/.local/bin
-if [ $? != 0 ]; then
-    print_error "  Unable to create ~/.local/bin"
-    printf "\n"
-    print_hr 40
-    exit 1
-fi
+# mkdir -p ~/.local/bin
+# if [ $? != 0 ]; then
+#     print_error "  Unable to create ~/.local/bin"
+#     printf "\n"
+#     print_hr 40
+#     exit 1
+# fi
 
 
-mv "$APP_NAME" ~/.local/bin/
-if [ $? = 0 ]; then
-    print_success "Installation successful. $APP_NAME installed in $PWD/$APP_NAME"
+# mv "$APP_NAME" ~/.local/bin/
+# if [ $? = 0 ]; then
+#     print_success "Installation successful. $APP_NAME installed in $PWD/$APP_NAME"
+#     printf "\n\n\n"
+# else
+#     print_error "Unable to move $APP_NAME to ~/.local/bin "
+#     printf "\n"
+#     print_hr 40
+#     exit 1
+# fi
     printf "\n\n\n"
-else
-    print_error "Unable to move $APP_NAME to ~/.local/bin "
-    printf "\n"
-    print_hr 40
-    exit 1
-fi
-print_info "Please start a new terminal session if following commands does not work."
-printf "\n\n"
-print_info "Run the following command to test your installation:"
 
+print_success "✅ Installation successful. $APP_NAME installed in ~/.witnesschain"
+    printf "\n\n\n"
+
+print_info "Add this installation location to PATH env var (or paste this line in your shell condig eg. ~/.bashrc or ~/.zshrc)"
+printf "\n\n\n\n"
+printf "export PATH=$HOME/.witnesschain:\$PATH"
+
+printf "\n\n\n\n"
+print_info "You can confirm the cli installation by running the following"
 printf "\n\n"
 print_info "$APP_NAME --version"
 printf "\n\n\n"
