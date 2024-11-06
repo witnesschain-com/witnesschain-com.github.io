@@ -1,0 +1,126 @@
+#!/bin/bash
+RELEASE_URL="https://github.com/witnesschain-com/dcl-operator-cli/releases/download/v0.0.11"
+APP_NAME="witness"
+
+
+print_hr() {
+    local length=${1:-30}  # Default length of the horizontal line
+    local char=${2:-"-"}   # Default character for the line
+    
+    for ((i=1; i<=$length; i++)); do
+        printf "%s" "$char"
+    done
+    printf "\n"
+}
+
+print_title() {
+    local title="$1"
+    local length=${#title}
+    print_hr $length "="
+    echo "$title"
+    print_hr $length "="
+}
+
+print_error() {
+    local message="$@"
+    printf "%s" "$(tput setaf 1)$message$(tput sgr0)" >&2
+}
+
+print_info() {
+    local message="$@"
+    printf "%s" "$(tput setaf 3)$message$(tput sgr0)"
+}
+
+print_success() {
+    local message="$@"
+    printf "%s" "$(tput setaf 2)$message$(tput sgr0)"
+}
+
+print_hr 40
+printf "\n"
+print_title "Setting up WitnessChain CLI"
+
+printf "\n- Platform Details:\n"
+PLATFORM=$(uname)
+ARCH=$(uname -m)
+
+if [ "$PLATFORM" = "Linux" ] && [ "$ARCH" = "x86_64" ]; then
+    print_success "    Operating System: Linux"
+    printf "\n"
+    print_success "    Architecture: x86_64"
+    printf "\n"
+    BINARY_NAME="witness_linux_x86_64"
+elif [ "$PLATFORM" = "Darwin" ] && [ "$ARCH" = "arm64" ]; then
+    print_success "    Operating Systems: macOS\n"
+    printf "\n"
+    print_success "    Architecture: arm64\n"
+    printf "\n"
+    BINARY_NAME="witness_apple_silicon"
+else
+    print_error " Unable to identify platform for the binaries, please setup manually"
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+mkdir -p ~/.witnesschain
+
+if [ $? != 0 ]; then
+    print_info " 🟡 Unable to create .witnesschain directory at home, going forward with current directory\n\n"
+    PATH_TO_CLI="."
+fi
+
+cd "$PATH_TO_CLI" || exit
+
+mkdir -p config
+
+
+printf "\n\n- 🏃 Downloading $APP_NAME...\n"
+curl -# -fSL  -o "$APP_NAME" "$RELEASE_URL/$BINARY_NAME"
+if [ $? = 0 ]; then
+    print_success "  ✅ Download completed. "
+    
+else
+    print_error "  ❌ Error downloading the binaries. exiting.."
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+chmod +x "$APP_NAME"
+if [ $? != 0 ]; then
+    print_error "  Unable to set executable permission for $PWD/$APP_NAME"
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+mkdir -p ~/.local/bin
+if [ $? != 0 ]; then
+    print_error "  Unable to create ~/.local/bin"
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+
+
+mv "$APP_NAME" ~/.local/bin/
+if [ $? = 0 ]; then
+    print_success "Installation successful. $APP_NAME installed in $HOME/.local/bin/"
+    printf "\n\n\n"
+else
+    print_error "Unable to move $APP_NAME to ~/.local/bin "
+    printf "\n"
+    print_hr 40
+    exit 1
+fi
+
+print_info "Please start a new terminal session if following commands does not work."
+print_info "Add export PATH=~/.local/bin/:\$PATH in your ~/.bashrc file for bash shell or ~/.zshrc for zsh shell. Then restart the terminal."
+printf "\n\n"
+print_info "Run the following command to test your installation:"
+
+printf "\n\n"
+print_info "$APP_NAME --version"
+printf "\n\n\n"
