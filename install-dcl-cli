@@ -51,13 +51,13 @@ if [ "$PLATFORM" = "Linux" ] && [ "$ARCH" = "x86_64" ]; then
     printf "\n"
     print_success "    Architecture: x86_64"
     printf "\n"
-    BINARY_NAME="dcl-operator_linux_x86_64"
+    BINARY_NAME="witnesschain-cli_linux_x86_64"
 elif [ "$PLATFORM" = "Darwin" ] && [ "$ARCH" = "arm64" ]; then
     print_success "    Operating Systems: macOS\n"
     printf "\n"
     print_success "    Architecture: arm64\n"
     printf "\n"
-    BINARY_NAME="dcl-operator_apple_silicon"
+    BINARY_NAME="witnesschain-cli_apple_silicon"
 else
     print_error " Unable to identify platform for the binaries, please setup manually"
     printf "\n"
