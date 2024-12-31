@@ -96,7 +96,7 @@ fi
 print_info "Prover config template: $PWD/config/operator-prover-config.json.template"
 printf "\n"
 
-printf "\n\n- 🏃 Downloading $APP_NAME...\n"
+printf "\n\n- 🏃 Downloading $APP_NAME ($RELEASE_URL/$BINARY_NAME)...\n"
 curl -# -fSL  -o "$APP_NAME" "$RELEASE_URL/$BINARY_NAME"
 if [ $? = 0 ]; then
     print_success "  ✅ Download completed. "
